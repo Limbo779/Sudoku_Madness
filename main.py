@@ -51,6 +51,7 @@ def give_d_0(sudoku,row,col):
     S_ = np.transpose(sudoku)
     l += (S_[col].tolist())
     l += give_box(sudoku,row,col)
+    l += sudoku[row]
     l = list(set(l))
     l = list(np.array(l,dtype=int))[1::]
 
@@ -94,8 +95,9 @@ for i in range(9):
     l=list(np.array(input().split(" "),dtype=int))
     sudoku.append(l)
 sudoku = np.array(sudoku)
+sudoku = sudoku.tolist()
 
-#print(give_d_0(sudoku,0,4))
+#print(give_d_0(sudoku.tolist(),0,4))
 
 for row in range(9):
     M=np.array([[float(1/9)]*9]*9)
@@ -104,19 +106,18 @@ for row in range(9):
     for col in range(9):
         if (sudoku[row][col] == 0):
             d_0[col] = give_d_0(sudoku,row,col)
+        else:
+            for j in range(9):
+                for i in range(9):
+                    if ((sudoku[row][col]==i+1) or (col==j)):
+                        M[j][i] = 0
+            
+            M[col][sudoku[row][col]-1] = 1
+    
     for i in list(d_0.keys()):
         for j in d_0[i]:
             M[i][j-1] = 0.0
-            M = normalize(M)
-
-    d_1 = {}
-    for col in range(9):
-        if (sudoku[row][col] != 0.0):
-            d_1[col] = sudoku[row,col]
-    for i in list(d_1.keys()):
-        M[i][d_1[i]-1] = 1.0
-        M = normalize(M)
-
+    
     M = normalize(M)
 
     write(f"Row {row+1} Matrix\n")
